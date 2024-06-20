@@ -23,22 +23,7 @@ print(df.head())
 conn = sqlite3.connect('heartData.db')
 cursor = conn.cursor()
 cursor.execute('''
-CREATE TABLE IF NOT EXISTS heartInfo (
-    age INTEGER,
-    sex INTEGER,
-    cp INTEGER,
-    trestbps INTEGER,
-    chol INTEGER,
-    fbs INTEGER,
-    restecg INTEGER,
-    thalach INTEGER,
-    exang INTEGER,
-    oldpeak REAL,
-    slope INTEGER,
-    ca INTEGER,
-    thal INTEGER,
-    target INTEGER
-)
+CREATE TABLE IF NOT EXISTS heartInfo (age INTEGER, sex INTEGER, cp INTEGER, trestbps INTEGER, chol INTEGER, fbs INTEGER, restecg INTEGER, thalach INTEGER, exang INTEGER, oldpeak REAL, slope INTEGER, ca INTEGER, thal INTEGER, target INTEGER)
 ''')
 conn.commit()
 
@@ -71,17 +56,17 @@ for i, var in enumerate(categorical_vars, 1):
 plt.tight_layout()
 plt.show()
 
-# Visualize non-categorical variables
-noncategorical_vars = ['age', 'trestbps', 'chol', 'thalach', 'oldpeak']
-plt.figure(figsize=(20, 15))
-for i, var in enumerate(noncategorical_vars, 1):
-    plt.subplot(3, 3, i)
-    sns.histplot(data=df, x=var, hue='target', kde=True)
-    plt.title(f'Distribution of {var} by Target')
-    plt.xlabel(var)
-    plt.ylabel('Count')
-plt.tight_layout()
-plt.show()
+# # Visualize non-categorical variables
+# noncategorical_vars = ['age', 'trestbps', 'chol', 'thalach', 'oldpeak']
+# plt.figure(figsize=(20, 15))
+# for i, var in enumerate(noncategorical_vars, 1):
+#     plt.subplot(3, 3, i)
+#     sns.histplot(data=df, x=var, hue='target', kde=True)
+#     plt.title(f'Distribution of {var} by Target')
+#     plt.xlabel(var)
+#     plt.ylabel('Count')
+# plt.tight_layout()
+# plt.show()
 
 # Data Preprocessing and Model Training
 training_1 = df.drop('target', axis=1)
@@ -141,31 +126,31 @@ for model_name, model in models.items():
         best_model = model
         best_auc = auc
 
-print(f"Best Model: {best_model}")
-print(f"Best AUC-ROC: {best_auc}")
+print(f"The best model to use is: {best_model}")
+# print(f"Best AUC-ROC: {best_auc}")
 
-# Save the best model and preprocessor
-joblib.dump(best_model, 'best_model.pkl')
-joblib.dump(preprocessor, 'preprocessor.pkl')
+# # Save the best model and preprocessor
+# joblib.dump(best_model, 'best_model.pkl')
+# joblib.dump(preprocessor, 'preprocessor.pkl')
 
 # Load the saved model and preprocessor in the Streamlit app
 model = joblib.load('best_model.pkl')
 preprocessor = joblib.load('preprocessor.pkl')
 
-def get_user_input():
-    age = st.number_input('Age', min_value=1, max_value=120, value=25)
-    sex = st.selectbox('Sex', [0, 1])  # 0 for female, 1 for male
-    cp = st.selectbox('Chest Pain Type (cp)', [0, 1, 2, 3])
-    trestbps = st.number_input('Resting Blood Pressure (trestbps)', min_value=0, max_value=300, value=120)
-    chol = st.number_input('Serum Cholesterol in mg/dl (chol)', min_value=0, max_value=600, value=200)
-    fbs = st.selectbox('Fasting Blood Sugar > 120 mg/dl (fbs)', [0, 1])
-    restecg = st.selectbox('Resting ECG (restecg)', [0, 1, 2])
-    thalach = st.number_input('Maximum Heart Rate Achieved (thalach)', min_value=0, max_value=220, value=150)
-    exang = st.selectbox('Exercise Induced Angina (exang)', [0, 1])
-    oldpeak = st.number_input('ST Depression Induced by Exercise (oldpeak)', min_value=0.0, max_value=10.0, value=1.0)
-    slope = st.selectbox('Slope of the Peak Exercise ST Segment (slope)', [0, 1, 2])
-    ca = st.selectbox('Number of Major Vessels Colored by Fluoroscopy (ca)', [0, 1, 2, 3, 4])
-    thal = st.selectbox('Thalassemia (thal)', [0, 1, 2, 3])
+def user_input():
+    age = st.number_input('Age:', min_value=1, max_value=120, value=25)
+    sex = st.selectbox('Sex:', ['Female', 'Male'])  # 0 for female, 1 for male
+    cp = st.selectbox('Chest Pain Type:', [0, 1, 2, 3])
+    trestbps = st.number_input('Resting Blood Pressure: ', min_value=0, max_value=300, value=120)
+    chol = st.number_input('Cholesterol Level:', min_value=0, max_value=600, value=200)
+    fbs = st.selectbox('Blood Sugar Level:', [0, 1])
+    restecg = st.selectbox('Resting Heart Rate:', [0, 1, 2])
+    thalach = st.number_input('Max Heart Rate:', min_value=0, max_value=220, value=150)
+    exang = st.selectbox('Exercise Induced Angina:', [0, 1])
+    oldpeak = st.number_input('ST Depression Induced by Exercise:', min_value=0.0, max_value=10.0, value=1.0)
+    slope = st.selectbox('Slope of the Peak Exercise ST Segment:', [0, 1, 2])
+    ca = st.selectbox('Number of Major Vessels Colored by Fluoroscopy:', [0, 1, 2, 3, 4])
+    thal = st.selectbox('Thalassemia:', [0, 1, 2, 3])
     
     user_data = {
         'age': age,
@@ -188,11 +173,11 @@ def get_user_input():
 
 def main():
     st.title('Heart Disease Prediction App')
-    st.write('Enter the details of the patient to predict the likelihood of heart disease.')
+    st.write('To predict the likelihood of heart disease please enter the following information: ')
 
-    input_df = get_user_input()
+    input_df = user_input()
 
-    st.subheader('Patient Data')
+    st.subheader('Overall Data Collected: ')
     st.write(input_df)
 
     preprocessed_input = preprocessor.transform(input_df)
@@ -200,10 +185,10 @@ def main():
     prediction = model.predict(preprocessed_input)
     prediction_proba = model.predict_proba(preprocessed_input)[:, 1]
 
-    st.subheader('Prediction')
+    st.subheader('Patients likelihood of heart disease: ')
     heart_disease_risk = 'High' if prediction[0] == 1 else 'Low'
-    st.write(f'The risk of heart disease is: {heart_disease_risk}')
-    st.write(f'Probability of having heart disease: {prediction_proba[0]:.2f}')
+    st.write(f'The patients risk of heart disease is: {heart_disease_risk}')
+    st.write(f'The probability of the patient getting heart disease: {prediction_proba[0]:.2f}')
 
 if __name__ == '__main__':
     main()
