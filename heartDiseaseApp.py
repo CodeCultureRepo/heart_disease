@@ -140,17 +140,17 @@ preprocessor = joblib.load('preprocessor.pkl')
 def user_input():
     age = st.number_input('Age:', min_value=1, max_value=120, value=25)
     sex = st.selectbox('Sex:', ['Female', 'Male'])  # 0 for female, 1 for male
-    cp = st.selectbox('Chest Pain Type:', [0, 1, 2, 3])
+    cp = st.selectbox('Chest Pain Type:', ["Typical Angina", "Atypical Angina", "Non-Anginal Pain", "Asymptomatic"])
     trestbps = st.number_input('Resting Blood Pressure: ', min_value=0, max_value=300, value=120)
     chol = st.number_input('Cholesterol Level:', min_value=0, max_value=600, value=200)
-    fbs = st.selectbox('Blood Sugar Level:', [0, 1])
-    restecg = st.selectbox('Resting Heart Rate:', [0, 1, 2])
+    fbs = st.selectbox('Blood Sugar Level:', ["False", "True"])
+    restecg = st.selectbox('Resting Heart Rate:', ["Normal", "Abnormal", "Ventricular hypertrophy"])
     thalach = st.number_input('Max Heart Rate:', min_value=0, max_value=220, value=150)
-    exang = st.selectbox('Exercise Induced Angina:', [0, 1])
+    exang = st.selectbox('Exercise Induced Angina:', ["No", "Yes"])
     oldpeak = st.number_input('ST Depression Induced by Exercise:', min_value=0.0, max_value=10.0, value=1.0)
-    slope = st.selectbox('Slope of the Peak Exercise ST Segment:', [0, 1, 2])
+    slope = st.selectbox('Slope of the Peak Exercise ST Segment:', ["Upsloping", "Flat", "Downsloping"])
     ca = st.selectbox('Number of Major Vessels Colored by Fluoroscopy:', [0, 1, 2, 3, 4])
-    thal = st.selectbox('Thalassemia:', [0, 1, 2, 3])
+    thal = st.selectbox('Thalassemia:', ["Unknown", "Normal", "Fixed defect", "Reversible defect"])
     
     user_data = {
         'age': age,
